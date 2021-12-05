@@ -1,0 +1,15 @@
+/target
+/classes
+/checkouts
+/resources
+aoc2021.iml
+profiles.clj
+pom.xml
+pom.xml.asc
+*.jar
+*.class
+/.lein-*
+/.nrepl-port
+.hgignore
+.hg/
+.idea/
