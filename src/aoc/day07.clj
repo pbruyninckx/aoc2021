@@ -1,4 +1,4 @@
-(ns aoc.aoc.day07
+(ns aoc.day07
   (:require [clojure.string :as str]
             [clojure.math.numeric-tower :as math :refer [abs]]))
 
