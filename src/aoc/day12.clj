@@ -18,23 +18,25 @@
 (defn small? [cave]
   (Character/isLowerCase ^Character (first cave)))
 
-(defn get-paths
-  ([part graph]
-   (get-paths graph #{"start"} "start" (= part 1)))
-  ([graph small-visited last-visited small-twice]
-   (cond (= "end" last-visited) 1
-         :else
-         (let [next-nodes (set/difference (graph last-visited)
-                                          (if small-twice small-visited #{})
-                                          #{"start"})]
-           (if (empty? next-nodes)
-             0
-             (apply +
-                    (for [node next-nodes]
-                      (get-paths graph
-                                 (if (small? node) (conj small-visited node) small-visited)
-                                 node
-                                 (or small-twice (small-visited node))))))))))
+(def memoized-get-paths
+  (memoize
+    (fn [graph small-visited last-visited small-twice]
+      (cond (= "end" last-visited) 1
+            :else
+            (let [next-nodes (set/difference (graph last-visited)
+                                             (if small-twice small-visited #{})
+                                             #{"start"})]
+              (if (empty? next-nodes)
+                0
+                (apply +
+                       (for [node next-nodes]
+                         (memoized-get-paths graph
+                                             (if (small? node) (conj small-visited node) small-visited)
+                                             node
+                                             (or small-twice (small-visited node)))))))))))
+
+(defn get-paths [part graph]
+ (memoized-get-paths graph #{"start"} "start" (= part 1)))
 
 (defn solve1 [graph]
   (get-paths 1 graph))
