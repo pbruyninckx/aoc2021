@@ -19,25 +19,30 @@
   (Character/isLowerCase ^Character (first cave)))
 
 (defn get-paths
-  ([graph]
-   (get-paths graph #{"start"} '("start")))
-  ([graph small-visited [last-visited & _ :as path]]
+  ([part graph]
+   (get-paths graph #{"start"} '("start") (if (= part 1) true false)))
+  ([graph small-visited [last-visited & _ :as path] small-twice]
    (cond (= "end" last-visited) (list path)
          :else
-         (let [next-nodes (set/difference (graph last-visited) small-visited)]
+         (let [next-nodes (set/difference (graph last-visited)
+                                          (if small-twice small-visited #{})
+                                          #{"start"})]
            (if (empty? next-nodes)
              '()
              (apply concat
                     (for [node next-nodes]
                       (get-paths graph
                                  (if (small? node) (conj small-visited node) small-visited)
-                                 (conj path node)))))))))
+                                 (conj path node)
+                                 (or small-twice (small-visited node))))))))))
 
 (defn solve1 [graph]
-  (->> (get-paths graph)
+  (->> (get-paths 1 graph)
        count))
 
-(defn solve2 [graph])
+(defn solve2 [graph]
+  (->> (get-paths 2 graph)
+       count))
 
 (defn -main []
   (let [input (parse-input "resources/input12.txt")]
